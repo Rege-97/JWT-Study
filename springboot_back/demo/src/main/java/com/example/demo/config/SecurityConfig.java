@@ -11,6 +11,9 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 
 @Configuration
@@ -36,5 +39,21 @@ public class SecurityConfig {
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        // CORS(Cross-Origin Resource Sharing)는 다른 출처(도메인)에서 온 요청을 허용할지 말지를 결정하는 보안 정책
+
+        // Cors 옵션을 설정할 수 있는 객체
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.addAllowedOrigin("http://localhost:5173"); // 이 출처에서 오는 요청만 허용(React)
+        configuration.addAllowedHeader("*");                     // 어떤 헤더 요청이든 다 허용
+        configuration.addAllowedMethod("*");                     // 어떤 HTTP 메서드든 다 허용
+        configuration.setAllowCredentials(true);                 // 쿠키, 인증정보 등의 자격증명을 같이 보낼 수 있도록 허용
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration); // 모든 URL(/**)에 대해 위에서 설정한 CORS 정책을 적용
+        return source;
     }
 }
