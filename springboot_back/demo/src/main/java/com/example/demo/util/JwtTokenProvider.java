@@ -16,6 +16,7 @@ public class JwtTokenProvider {
 
     /**
      * JWT 토큰 생성
+     *
      * @param username
      * @return
      */
@@ -28,8 +29,29 @@ public class JwtTokenProvider {
                 .compact(); // JWT 문자열로 변환
     }
 
+    public String generateAccessToken(String username) {
+        long expiration_30m = 1000L * 60 * 30;
+        return Jwts.builder()
+                .setSubject(username)
+                .setIssuedAt(new Date())
+                .setExpiration(new Date(System.currentTimeMillis() + expiration_30m))
+                .signWith(key)
+                .compact();
+    }
+
+    public String generateRefreshToken(String username) {
+        long expiration_7d = 1000L * 7 * 24 * 60 * 60;
+        return Jwts.builder()
+                .setSubject(username)
+                .setIssuedAt(new Date())
+                .setExpiration(new Date(System.currentTimeMillis() + expiration_7d))
+                .signWith(key)
+                .compact();
+    }
+
     /**
      * JWT 로그인(복호화)
+     *
      * @param token
      * @return
      */
@@ -44,6 +66,7 @@ public class JwtTokenProvider {
 
     /**
      * 토큰 검증
+     *
      * @param token
      * @return
      */

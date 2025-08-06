@@ -1,6 +1,7 @@
 package com.example.demo.service;
 
 import com.example.demo.dto.LoginRequestDTO;
+import com.example.demo.dto.LoginResponseDTO;
 import com.example.demo.dto.UserRequestDTO;
 import com.example.demo.entity.User;
 import com.example.demo.repository.UserRepository;
@@ -31,7 +32,7 @@ public class UserService {
         userRepository.save(user);
     }
 
-    public String login(LoginRequestDTO loginRequestDTO) {
+    public LoginResponseDTO login(LoginRequestDTO loginRequestDTO) {
         User user = userRepository
                 .findByUsername(loginRequestDTO.getUsername())
                 .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
@@ -39,6 +40,14 @@ public class UserService {
             throw new RuntimeException("비밀번호가 일치하지 않습니다.");
         }
 
-        return jwtTokenProvider.generateToken(user.getUsername());
+        // 액세스 토큰과 리프레쉬 토큰 생성
+        String accessToken = jwtTokenProvider.generateAccessToken(user.getUsername());
+        String refreshToken = jwtTokenProvider.generateRefreshToken(user.getUsername());
+
+        // 리프레쉬 토큰 DB 저장
+        user.setRefreshToken(refreshToken);
+        userRepository.save(user);
+
+        return new LoginResponseDTO(accessToken, refreshToken);
     }
 }
