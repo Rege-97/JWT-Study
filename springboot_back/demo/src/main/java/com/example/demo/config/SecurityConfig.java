@@ -22,6 +22,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth // 들어오는 요청 URL에 따라 허용할지 인증 필요한지 설정
                         .requestMatchers("/api/public/**").permitAll()  // 허용
                         .requestMatchers("/api/private/**").authenticated() // 인증 필요
+                        .requestMatchers("/api/auth/**").permitAll()
                         .anyRequest().denyAll() // 나머지 모든 요청은 차단
                 );
 
