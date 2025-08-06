@@ -1,6 +1,5 @@
 package com.example.demo.service;
 
-import com.example.demo.dto.LoginRequestDTO;
 import com.example.demo.dto.LoginResponseDTO;
 import com.example.demo.dto.UserRequestDTO;
 import com.example.demo.entity.User;
@@ -32,7 +31,7 @@ public class UserService {
         userRepository.save(user);
     }
 
-    public LoginResponseDTO login(LoginRequestDTO loginRequestDTO) {
+    public LoginResponseDTO login(UserRequestDTO loginRequestDTO) {
         User user = userRepository
                 .findByUsername(loginRequestDTO.getUsername())
                 .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
